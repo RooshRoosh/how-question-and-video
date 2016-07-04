@@ -4,9 +4,7 @@ from scipy.sparse import hstack
 
 import pymorphy2
 from pymorphy2.cache import memoized_with_single_argument
-from russian_tagsets.opencorpora import GRAM_TABLE
 
-tags_translate = {i[1]:i[2] for i in GRAM_TABLE}
 m = pymorphy2.MorphAnalyzer()
 
 @memoized_with_single_argument({})
@@ -120,10 +118,6 @@ def __example():
     c = pymongo.MongoClient('localhost', 27017)
     db = c.mailru_qa
     vectorizer = HowToQuestionVectorizer()
-
-    def get_data():
-        for item in db.question.find({}):
-            yield item['qtext']
 
     X = vectorizer.fit_transform([item['qtext'] for item in db.question.find({}) if item.get('qtext')])
     print(X.toarray())
