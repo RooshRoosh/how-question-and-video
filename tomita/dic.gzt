@@ -7,5 +7,7 @@ import "fact_types.proto";
 
 TAuxDicArticle "первая_грамматика"
 {
-    key = {"tomita:first_grammar.cxx" type=CUSTOM}
+    key = {
+        "tomita:first_grammar.cxx" type=CUSTOM
+    }
 }

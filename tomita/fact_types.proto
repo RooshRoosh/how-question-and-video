@@ -3,6 +3,7 @@ import "facttypes_base.proto";
 
 message Q: NFactType.TFact
 {
-    required string Adv = 1;
     required string Verb = 2;
+    required string NounAfterVerb = 3;
+    optional string FirstWords=4;
 }
