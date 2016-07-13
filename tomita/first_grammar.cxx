@@ -6,4 +6,5 @@ ShortTerm-> ShortTermEng|ShortTermRus;
 //PersonalPronoun -> "себе" | "себя" | "тебя" | "тебе";
 PrepT -> "c"|Prep;
 NounGroup -> (PrepT) (Adj) ShortTerm|Noun;
-SimpleQuestionStart -> 'как' (Word<gram="~V">+ interp(Q.FirstWords::not_norm)) Word<gram="V"> interp(Q.Verb::not_norm) (NounGroup interp(Q.NounAfterVerb::not_norm));
+VerbLike -> Word<gram="V"> | Word<wfl=".+(ться|чься)">{outgram='V,inf,ipf'} | Word<wfl=".+(чь|ть)">{outgram='V,inf,pf'};
+SimpleQuestionStart -> 'как' (Word<gram="~V">+ interp(Q.FirstWords::not_norm)) VerbLike interp(Q.Verb::not_norm) (NounGroup interp(Q.NounAfterVerb::not_norm));
