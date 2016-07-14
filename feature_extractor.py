@@ -1,3 +1,5 @@
+import pprint
+import xml.etree.ElementTree
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction import  DictVectorizer
 from scipy.sparse import hstack
@@ -20,6 +22,8 @@ def verb_from(word):
         return tags.cyr_repr, r
     else:
         return {}
+
+
 
 
 class HowToQuestionVectorizer():
@@ -97,6 +101,41 @@ class HowToQuestionVectorizer():
             ]
         )
 
+
+def parse_tommita():
+
+    prep = {'без', 'в', 'для', 'до', 'за',
+            'из', 'к', 'на', 'над', 'о', 'об',
+            'от', 'перед', 'по', 'под', 'при',
+            'про', 'с', 'у', 'через'}
+    e = xml.etree.ElementTree.parse('./tomita/output.xml').getroot()
+
+    for (q, lead) in zip(*e.getchildren()[0].getchildren()):
+
+        data = {
+            fact_field.tag: fact_field.attrib['val'] for fact_field in q.getchildren()
+        }
+        item = {}
+        if 'Verb' in data:
+            parsed_verb = m.parse(data['Verb'])[0].tag
+            item['verb'] = data['Verb']
+            item['is_infn'] = True if 'INFN' in parsed_verb else False
+            item['is_perf'] = True if 'perf' in parsed_verb else False
+        if 'NounAfterVerb' in data:
+            item['noun_after_verb'] = data['NounAfterVerb']
+        if item.get('is_infn') and item.get('noun_after_verb'):
+            if set(item['noun_after_verb'].split()) & prep:
+                item['is_direct_objective'] = True
+
+        if 'FirstWords' in data:
+            item['first_words'] = data['FirstWords']
+
+        s=xml.etree.ElementTree.fromstring(
+            lead.attrib['text']
+        ).getchildren()[1].getchildren()[0]
+
+        yield ' '.join([i.strip() for i in s.itertext() if i!=' ']), item
+
 # vec = DictVectorizer()
 # pos_vectorized = vec.fit_transform(pos_window)
 # print(pos_vectorized)
@@ -111,6 +150,13 @@ class HowToQuestionVectorizer():
 #     'Какие рыбы водятся в реках Питера?',
 # ]
 
+def __example_tomita():
+    vectorizer = DictVectorizer()
+
+    X = vectorizer.fit_transform((i[1] for i in parse_tommita()))
+    print(vectorizer.get_feature_names())
+    print(len(vectorizer.get_feature_names()))
+
 def __example():
 
 
@@ -123,8 +169,10 @@ def __example():
     print(X.toarray())
     print(vectorizer.get_feature_names())
     print(len(vectorizer.get_feature_names()))
-    print(vectorizer.transform(['Какие рыбы водят ся в реках Москвы?']).toarray())
+    print(vectorizer.transform(['Какие рыбы водятся в реках Москвы?']).toarray())
 
 
 if __name__ == '__main__':
-    __example()
+    # __example() # демо N-грамм векторайзера
+    # __example_tomita() # векторайзера фич томиты
+    pass

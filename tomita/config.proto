@@ -3,11 +3,11 @@ encoding "utf8";
 TTextMinerConfig {
     Dictionary = "dic.gzt";
 
-    Input = {File="question.txt"}  // Вывод нужно делать или в файл или в stdin
+    Input = {File="input.txt"}  // Вывод нужно делать или в файл или в stdin
 
     Output = {
-        File="output.txt"
-        Format=text
+        File="output.xml"
+        Format=xml
     }
     Articles = [
         {Name = "первая_грамматика"}
